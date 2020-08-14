@@ -51,7 +51,7 @@ static const int bkl_to_pcc[BACKLIGHT_INDEX] =
 	245, 246, 249, 249, 250, 252, 254, 255, 256};
 
 /* Minimum backlight value that does not flicker */
-static int elvss_off_threshold = 66;
+static int elvss_off_threshold = 80;
 
 struct mdss_panel_data *pdata;
 struct mdp_pcc_cfg_data pcc_config;
