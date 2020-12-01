@@ -57,6 +57,17 @@
 #include "mdss_smmu.h"
 #include "mdss_mdp.h"
 
+#ifdef CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL
+#include <linux/regulator/qpnp-labibb-regulator.h>
+#include "mdss_dsi_panel_driver.h"
+#include "mdss_dsi_panel_debugfs.h"
+#endif /* CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL */
+#include "mdss_livedisplay.h"
+
+#ifdef CONFIG_FLICKER_FREE
+#include "flicker_free.h"
+#endif
+
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
 #define MDSS_FB_NUM 3
 #else
@@ -1753,9 +1764,6 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 	u32 temp = bkl_lvl;
 	bool ad_bl_notify_needed = false;
 	bool bl_notify_needed = false;
-#ifdef CONFIG_FLICKER_FREE
-	u32 bkl_lvl_calc;
-#endif
 
 	if ((((mdss_fb_is_power_off(mfd) && mfd->dcm_state != DCM_ENTER)
 		|| !mfd->allow_bl_update) && !IS_CALIB_MODE_BL(mfd)) ||
@@ -1789,14 +1797,12 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 		} else {
 			if (mfd->bl_level != bkl_lvl)
 				bl_notify_needed = true;
+			pr_debug("backlight sent to panel :%d\n", temp);
 #ifdef CONFIG_FLICKER_FREE
 			ff_mfd_copy = mfd;
-			ff_bkl_lvl_cpy = temp;
-			bkl_lvl_calc = mdss_panel_calc_backlight(temp);
-			pr_debug("backlight sent to panel :%d\n", bkl_lvl_calc);
-			pdata->set_backlight(pdata, bkl_lvl_calc);
+			ff_bl_lvl_cpy = temp;
+			pdata->set_backlight(pdata, mdss_panel_calc_backlight(temp));
 #else
-			pr_debug("backlight sent to panel :%d\n", temp);
 			pdata->set_backlight(pdata, temp);
 #endif
 			mfd->bl_level = bkl_lvl;
@@ -1810,18 +1816,6 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 				NOTIFY_TYPE_BL_UPDATE);
 	}
 }
-
-#ifdef CONFIG_FLICKER_FREE
-struct msm_fb_data_type *get_mfd_copy(void)
-{
-	return ff_mfd_copy;
-}
-
-u32 get_bkl_lvl(void)
-{
-	return ff_bkl_lvl_cpy;
-}
-#endif
 
 void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 {
@@ -1846,7 +1840,7 @@ void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 			mdss_fb_bl_update_notify(mfd, NOTIFY_TYPE_BL_UPDATE);
 #ifdef CONFIG_FLICKER_FREE
 			ff_mfd_copy = mfd;
-			ff_bkl_lvl_cpy = temp;
+			ff_bl_lvl_cpy = temp;
 			pdata->set_backlight(pdata, mdss_panel_calc_backlight(temp));
 #else
 			pdata->set_backlight(pdata, temp);
