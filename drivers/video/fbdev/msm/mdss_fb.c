@@ -64,7 +64,7 @@
 #endif /* CONFIG_FB_MSM_MDSS_SPECIFIC_PANEL */
 #include "mdss_livedisplay.h"
 
-#ifdef CONFIG_FLICKER_FREE
+#ifdef CONFIG_FB_MSM_MDSS_FLICKER_FREE
 #include "flicker_free.h"
 #endif
 
@@ -1779,6 +1779,10 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 	pdata = dev_get_platdata(&mfd->pdev->dev);
 
 	if ((pdata) && (pdata->set_backlight)) {
+#ifdef CONFIG_FB_MSM_MDSS_FLICKER_FREE
+		/* Update mfd */
+		mdss_fb_update_flicker_free_mfd(mfd);
+#endif
 		if (mfd->mdp.ad_calc_bl)
 			(*mfd->mdp.ad_calc_bl)(mfd, temp, &temp,
 							&ad_bl_notify_needed);
@@ -1798,10 +1802,6 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 			if (mfd->bl_level != bkl_lvl)
 				bl_notify_needed = true;
 			pr_debug("backlight sent to panel :%d\n", temp);
-#ifdef CONFIG_FLICKER_FREE
-			ff_mfd_copy = mfd;
-			ff_bl_lvl_cpy = temp;
-#endif
 			pdata->set_backlight(pdata, temp);
 			mfd->bl_level = bkl_lvl;
 			mfd->bl_level_scaled = temp;
@@ -1827,6 +1827,10 @@ void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 	if (!mfd->allow_bl_update) {
 		pdata = dev_get_platdata(&mfd->pdev->dev);
 		if ((pdata) && (pdata->set_backlight)) {
+#ifdef CONFIG_FB_MSM_MDSS_FLICKER_FREE
+			/* Update mfd */
+			mdss_fb_update_flicker_free_mfd(mfd);
+#endif
 			mfd->bl_level = mfd->unset_bl_level;
 			temp = mfd->bl_level;
 			if (mfd->mdp.ad_calc_bl)
@@ -1836,10 +1840,6 @@ void mdss_fb_update_backlight(struct msm_fb_data_type *mfd)
 				mdss_fb_bl_update_notify(mfd,
 					NOTIFY_TYPE_BL_AD_ATTEN_UPDATE);
 			mdss_fb_bl_update_notify(mfd, NOTIFY_TYPE_BL_UPDATE);
-#ifdef CONFIG_FLICKER_FREE
-			ff_mfd_copy = mfd;
-			ff_bl_lvl_cpy = temp;
-#endif
 			pdata->set_backlight(pdata, temp);
 			mfd->bl_level_scaled = mfd->unset_bl_level;
 			mfd->allow_bl_update = true;
