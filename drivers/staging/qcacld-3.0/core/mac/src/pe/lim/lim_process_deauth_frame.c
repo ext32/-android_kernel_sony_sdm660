@@ -312,6 +312,7 @@ lim_process_deauth_frame(tpAniSirGlobal pMac, uint8_t *pRxPacketInfo,
 			       WLAN_LOG_INDICATOR_HOST_DRIVER,
 			       WLAN_LOG_REASON_DISCONNECT,
 				false, false);
+	}
 
 } /*** end lim_process_deauth_frame() ***/
 
