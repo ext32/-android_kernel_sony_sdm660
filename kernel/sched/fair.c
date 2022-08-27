@@ -7908,7 +7908,6 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 		}
 	}
 
-	rcu_read_lock();
 #ifdef CONFIG_CGROUP_SCHEDTUNE
 	boosted = schedtune_task_boost(p) > 0;
 	prefer_idle = schedtune_prefer_idle(p) > 0;
@@ -7949,7 +7948,7 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 			.util_delta     = task_util(p),
 			.src_cpu        = prev_cpu,
 			.dst_cpu        = next_cpu,
-			.trg_cpu	= next_cpu
+			.trg_cpu	= next_cpu,
 			.task           = p,
 		};
 
@@ -7963,9 +7962,11 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 		if (__cpu_overutilized(prev_cpu, delta)) {
 			schedstat_inc(p, se.statistics.nr_wakeups_secb_insuff_cap);
 			schedstat_inc(this_rq(), eas_stats.secb_insuff_cap);
+			target_cpu = next_cpu;
 			goto unlock;
 		}
 
+		target_cpu = next_cpu;
 		if (energy_diff(&eenv) >= 0) {
 			/* No energy saving for target_cpu, try backup */
 			target_cpu = backup_cpu;
