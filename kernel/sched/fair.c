@@ -6508,11 +6508,6 @@ unsigned long capacity_min_of(int cpu)
 	       >> SCHED_CAPACITY_SHIFT;
 }
 
-static inline bool energy_aware(void)
-{
-       return sched_feat(ENERGY_AWARE);
-}
-
 struct energy_env {
 	struct sched_group	*sg_top;
 	struct sched_group	*sg_cap;
