@@ -3108,7 +3108,6 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
 	int pos;
 	int dummy;
 
-
 	if (list_skb && !list_skb->head_frag && skb_headlen(list_skb) &&
 	    (skb_shinfo(head_skb)->gso_type & SKB_GSO_DODGY)) {
 		/* gso_size is untrusted, and we have a frag_list with a linear
@@ -3857,18 +3856,10 @@ void __skb_tstamp_tx(struct sk_buff *orig_skb,
 	if (!skb_may_tx_timestamp(sk, tsonly))
 		return;
 
-	if (tsonly) {
-#ifdef CONFIG_INET
-		if ((sk->sk_tsflags & SOF_TIMESTAMPING_OPT_STATS) &&
-		    sk->sk_protocol == IPPROTO_TCP &&
-		    sk->sk_type == SOCK_STREAM)
-			skb = tcp_get_timestamping_opt_stats(sk);
-		else
-#endif
-			skb = alloc_skb(0, GFP_ATOMIC);
-	} else {
+	if (tsonly)
+		skb = alloc_skb(0, GFP_ATOMIC);
+	else
 		skb = skb_clone(orig_skb, GFP_ATOMIC);
-	}
 	if (!skb)
 		return;
 
