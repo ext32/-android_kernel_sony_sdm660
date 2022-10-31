@@ -10287,14 +10287,26 @@ static int hdd_initialize_mac_address(hdd_context_t *hdd_ctx)
 	int ret;
 	bool update_mac_addr_to_fw = true;
 
+	ret = hdd_platform_wlan_mac(hdd_ctx);
+	if (hdd_ctx->config->mac_provision || !ret) {
+		hdd_info("using MAC address from platform driver");
+		return ret;
+	}
+
 	hdd_info("MAC is not programmed in platform driver ret: %d, use wlan_mac.bin",
 		 ret);
+
+	status = hdd_update_mac_config(hdd_ctx);
+
+	if (QDF_IS_STATUS_SUCCESS(status)) {
+		hdd_info("using MAC address from wlan_mac.bin");
+		return 0;
+	}
 
 	hdd_info("using default MAC address");
 
 	/* Use fw provided MAC */
 	if (!qdf_is_macaddr_zero(&hdd_ctx->hw_macaddr)) {
-		reverse_byte_array(&hdd_ctx->hw_macaddr.bytes[0], 6);
 		hdd_update_macaddr(hdd_ctx, hdd_ctx->hw_macaddr, false);
 		update_mac_addr_to_fw = false;
 	} else if (hdd_generate_macaddr_auto(hdd_ctx) != 0) {
@@ -10312,26 +10324,10 @@ static int hdd_initialize_mac_address(hdd_context_t *hdd_ctx)
 
 	if (update_mac_addr_to_fw) {
 		ret = hdd_update_mac_addr_to_fw(hdd_ctx);
-		if (!ret) {
-			hdd_info("using fw generated MAC address");
-			return 0;
-		}
-	} else {
-		hdd_info("using fw provided MAC address");
-		return 0;
+		if (ret)
+			hdd_err("MAC address out-of-sync, ret:%d", ret);
 	}
-
-	ret = hdd_platform_wlan_mac(hdd_ctx);
-	if (hdd_ctx->config->mac_provision || !ret) {
-		hdd_info("using MAC address from platform driver");
-		return ret;
-	}
-	status = hdd_update_mac_config(hdd_ctx);
-	if (QDF_IS_STATUS_SUCCESS(status)) {
-		hdd_info("using MAC address from wlan_mac.bin");
-		return 0;
-	}
-	return ret;
+	return 0;
 }
 
 static int hdd_set_smart_chainmask_enabled(hdd_context_t *hdd_ctx)
