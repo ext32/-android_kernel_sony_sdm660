@@ -1821,7 +1821,6 @@ static struct l2cap_chan *l2cap_global_chan_by_psm(int state, __le16 psm,
 				read_unlock(&chan_list_lock);
 				return c;
  			}
-			}
 
 			/* Closest match */
 			src_any = !bacmp(&c->src, BDADDR_ANY);
@@ -1833,7 +1832,7 @@ static struct l2cap_chan *l2cap_global_chan_by_psm(int state, __le16 psm,
 	}
 
 	if (c1)
-	c1 = l2cap_chan_hold_unless_zero(c1);
+		c1 = l2cap_chan_hold_unless_zero(c1);
 
 	read_unlock(&chan_list_lock);
 
@@ -5652,7 +5651,7 @@ static inline int l2cap_le_credits(struct l2cap_conn *conn,
 		/* Return 0 so that we don't trigger an unnecessary
 		 * command reject packet.
 		 */
-		goto unlock
+		goto unlock;
 	}
 
 	chan->tx_credits += credits;
