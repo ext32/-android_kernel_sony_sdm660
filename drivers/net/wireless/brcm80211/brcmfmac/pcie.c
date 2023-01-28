@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Broadcom Corporation
+x/* Copyright (c) 2014 Broadcom Corporation
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -622,7 +622,9 @@ static int brcmf_pcie_exit_download_state(struct brcmf_pciedev_info *devinfo,
 		brcmf_chip_resetcore(core, 0, 0, 0);
 	}
 
-	return !brcmf_chip_set_active(devinfo->ci, resetintr);
+	if (!brcmf_chip_set_active(devinfo->ci, resetintr))
+		return -EIO;
+	return 0;
 }
 
 
