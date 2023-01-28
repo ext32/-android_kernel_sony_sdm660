@@ -1,4 +1,4 @@
-+/*
+/*
  * soc-ops.c  --  Generic ASoC operations
  *
  * Copyright 2005 Wolfson Microelectronics PLC.
