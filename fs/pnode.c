@@ -247,7 +247,7 @@ static int propagate_one(struct mount *m)
 		}
 		do {
 			struct mount *parent = last_source->mnt_parent;
-			if (last_source == first_source)
+			if (peers(last_source, first_source))
 				break;
 			done = parent->mnt_master == p;
 			if (done && peers(n, parent))
@@ -260,7 +260,7 @@ static int propagate_one(struct mount *m)
 		if (IS_MNT_SHARED(m))
 			type |= CL_MAKE_SHARED;
 	}
-		
+
 	/* Notice when we are propagating across user namespaces */
 	if (m->mnt_ns->user_ns != user_ns)
 		type |= CL_UNPRIVILEGED;
