@@ -1653,7 +1653,7 @@ lim_populate_peer_rate_set(tpAniSirGlobal pMac,
 {
 	tSirMacRateSet tempRateSet;
 	tSirMacRateSet tempRateSet2;
-	uint32_t i, j, val, min;
+	uint32_t i, j, val, min, isArate = 0;
 	uint8_t aRateIndex = 0;
 	uint8_t bRateIndex = 0;
 
