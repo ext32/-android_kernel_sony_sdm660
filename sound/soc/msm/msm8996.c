@@ -328,7 +328,7 @@ static int msm_slim_0_tx_ch = 1;
 static int msm_slim_1_tx_ch = 1;
 static int msm_slim_5_rx_ch = 1;
 static int msm_slim_6_rx_ch = 1;
-static int msm_hifi_control = MSM_HIFI_ON;
+static int msm_hifi_control = MSM8996_HIFI_ON;
 static int msm_vi_feed_tx_ch = 2;
 
 static int msm_hdmi_rx_ch = 2;
@@ -690,8 +690,8 @@ static int msm8996_hifi_get(struct snd_kcontrol *kcontrol,
 static int msm8996_hifi_put(struct snd_kcontrol *kcontrol,
 			      struct snd_ctl_elem_value *ucontrol)
 {
-	/* Always enable msm_hifi_control */
-	msm_hifi_ctrl(snd_soc_kcontrol_codec(kcontrol));
+	/* Always enable msm8996_hifi_control */
+	msm8996_hifi_ctrl(snd_soc_kcontrol_codec(kcontrol));
 	return 0;
 }
 
