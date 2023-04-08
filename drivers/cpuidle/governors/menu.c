@@ -303,8 +303,9 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
 		data->needs_update = 0;
 	}
 
-	/* resume_latency is 0 means no restriction */
-	if (resume_latency && resume_latency < latency_req)
+
+	if (resume_latency < latency_req &&
+	    resume_latency != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT)
 		latency_req = resume_latency;
 
 	data->last_state_idx = CPUIDLE_DRIVER_STATE_START - 1;
