@@ -86,7 +86,7 @@ static bool default_stop_ok(struct device *dev)
 	if (constraint_ns == PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS) {
 		/* "No restriction", so the device is allowed to suspend. */
 		td->effective_constraint_ns = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS;
-		td->cached_suspend_ok = true;
+//		td->cached_suspend_ok = true;
 	} else if (constraint_ns == 0) {
 		/*
 		 * This triggers if one of the children that don't belong to a
