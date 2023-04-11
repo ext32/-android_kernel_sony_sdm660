@@ -11301,13 +11301,13 @@ static inline void set_cpu_sd_state_busy(void)
 	int cpu = smp_processor_id();
 
 	rcu_read_lock();
-	sd = rcu_dereference(per_cpu(sd_busy, cpu));
+	sd = rcu_dereference(per_cpu(sd_llc, cpu));
 
 	if (!sd || !sd->nohz_idle)
 		goto unlock;
 	sd->nohz_idle = 0;
 
-	atomic_inc(&sd->groups->sgc->nr_busy_cpus);
+	atomic_inc(&sd->shared->nr_busy_cpus);
 unlock:
 	rcu_read_unlock();
 }
@@ -11318,13 +11318,13 @@ void set_cpu_sd_state_idle(void)
 	int cpu = smp_processor_id();
 
 	rcu_read_lock();
-	sd = rcu_dereference(per_cpu(sd_busy, cpu));
+	sd = rcu_dereference(per_cpu(sd_llc, cpu));
 
 	if (!sd || sd->nohz_idle)
 		goto unlock;
 	sd->nohz_idle = 1;
 
-	atomic_dec(&sd->groups->sgc->nr_busy_cpus);
+	atomic_dec(&sd->shared->nr_busy_cpus);
 unlock:
 	rcu_read_unlock();
 }
