@@ -1164,6 +1164,10 @@ unsigned long capacity_curr_of(int cpu);
 
 struct sched_group;
 
+struct sched_domain_shared {
+	atomic_t	ref;
+};
+
 struct eas_stats {
 	/* select_idle_sibling() stats */
 	u64 sis_attempts;
@@ -1266,6 +1270,8 @@ struct sched_domain {
 		struct rcu_head rcu;	/* used during destruction */
 	};
 
+	struct sched_domain_shared *shared;
+
 	unsigned int span_weight;
 	/*
 	 * Span of all CPUs in this domain.
@@ -1300,6 +1306,7 @@ const struct sched_group_energy * const(*sched_domain_energy_f)(int cpu);
 
 struct sd_data {
 	struct sched_domain **__percpu sd;
+	struct sched_domain_shared **__percpu sds;
 	struct sched_group **__percpu sg;
 	struct sched_group_capacity **__percpu sgc;
 };
