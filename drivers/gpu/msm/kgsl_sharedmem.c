@@ -452,7 +452,6 @@ static void kgsl_page_alloc_free(struct kgsl_memdesc *memdesc)
 		atomic_long_sub(memdesc->size,
 			&kgsl_driver.stats.page_free_pending);
 	}
-
 }
 
 /*
@@ -854,6 +853,7 @@ kgsl_sharedmem_page_alloc_user(struct kgsl_memdesc *memdesc,
 done:
 	if (!(memdesc->flags & KGSL_MEMFLAGS_SECURE))
 		atomic_long_sub(size, &kgsl_driver.stats.page_alloc_pending);
+
 	if (ret) {
 		if (memdesc->pages) {
 			unsigned int count = 1;
