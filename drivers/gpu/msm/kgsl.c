@@ -2184,6 +2184,7 @@ static int memdesc_sg_virt(struct kgsl_memdesc *memdesc, unsigned long useraddr)
 	ret = sg_alloc_table_from_pages(memdesc->sgt, pages, npages,
 					0, memdesc->size, GFP_KERNEL);
 
+
 	if (ret)
 		goto out;
 
@@ -2192,7 +2193,6 @@ static int memdesc_sg_virt(struct kgsl_memdesc *memdesc, unsigned long useraddr)
 
 	if (ret)
 		sg_free_table(memdesc->sgt);
-
 out:
 	if (ret) {
 		for (i = 0; i < npages; i++)
@@ -2772,7 +2772,6 @@ long kgsl_ioctl_map_user_mem(struct kgsl_device_private *dev_priv,
 			| KGSL_MEMALIGN_MASK
 			| KGSL_MEMFLAGS_USE_CPU_MAP
 			| KGSL_MEMFLAGS_SECURE;
-
 
 	entry->memdesc.flags = (uint64_t) param->flags;
 
@@ -4994,7 +4993,7 @@ int kgsl_device_platform_probe(struct kgsl_device *device)
 	}
 
 	device->events_wq = alloc_workqueue("kgsl-events",
-		WQ_UNBOUND | WQ_MEM_RECLAIM | WQ_SYSFS, 0);
+		WQ_UNBOUND | WQ_MEM_RECLAIM | WQ_SYSFS | WQ_HIGHPRI, 0);
 
 	/* Initalize the snapshot engine */
 	kgsl_device_snapshot_init(device);
