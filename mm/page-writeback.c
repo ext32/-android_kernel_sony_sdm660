@@ -69,6 +69,7 @@
  * will look to see if it needs to force writeback or throttling.
  */
 static long ratelimit_pages = 256;
+int dirty_background_ratio = 5;
 
 /* The following parameters are exported via /proc/sys/vm */
 
@@ -81,7 +82,7 @@ int vm_highmem_is_dirtyable;
 /*
  * The generator of dirty data starts writeback at this percentage
  */
-int vm_dirty_ratio = 20;
+int vm_dirty_ratio = 10;
 
 /*
  * vm_dirty_bytes starts at 0 (disabled) so that it is a function of
