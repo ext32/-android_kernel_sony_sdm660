@@ -5646,24 +5646,6 @@ static int smbchg_hvdcp3_confirmed(struct smbchg_chip *chip)
 	return rc;
 }
 
-static int smbchg_get_prop_batt_charge_counter(struct smbchg_chip *chip)
-{
-	int rc;
-	union power_supply_propval val;
-
-	if (!chip->bms_psy)
-		return -EINVAL;
-
-	rc = power_supply_get_property(chip->bms_psy,
-				POWER_SUPPLY_PROP_CHARGE_COUNTER, &val);
-	if (rc < 0) {
-		pr_smb(PR_STATUS, "Couldn't get charge count rc = %d\n", rc);
-		return rc;
-	}
-
-	return val.intval;
-}
-
 static int smbchg_dp_dm(struct smbchg_chip *chip, int val)
 {
 	int rc = 0;
@@ -5730,6 +5712,39 @@ static int smbchg_dp_dm(struct smbchg_chip *chip, int val)
 	}
 
 	return rc;
+}
+
+static int smbchg_get_prop_batt_charge_counter(struct smbchg_chip *chip)
+{
+	int rc;
+	union power_supply_propval val;
+	if (!chip->bms_psy)
+		return -EINVAL;
+	rc = power_supply_get_property(chip->bms_psy,
+				POWER_SUPPLY_PROP_CHARGE_COUNTER, &val);
+	if (rc < 0) {
+		pr_smb(PR_STATUS, "Couldn't get charge count rc = %d\n", rc);
+		return rc;
+	}
+	return val.intval;
+}
+
+static int smbchg_get_prop_batt_current_max(struct smbchg_chip *chip)
+{
+	int rc;
+	union power_supply_propval val;
+
+	if (!chip->usb_psy)
+		return -EINVAL;
+
+	rc = power_supply_get_property(chip->usb_psy,
+				POWER_SUPPLY_PROP_CURRENT_MAX, &val);
+	if (rc < 0) {
+		pr_smb(PR_STATUS, "Couldn't get current max rc = %d\n", rc);
+		return rc;
+	}
+
+	return val.intval;
 }
 
 static void update_typec_capability_status(struct smbchg_chip *chip,
