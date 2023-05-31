@@ -80,20 +80,18 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 			io_busy = od_tuners->io_is_busy;
 		cur_idle_time = get_cpu_idle_time(j, &cur_wall_time, io_busy);
 
-		wall_time = (unsigned int)
-			(cur_wall_time - j_cdbs->prev_cpu_wall);
+		wall_time = cur_wall_time - j_cdbs->prev_cpu_wall;
 		j_cdbs->prev_cpu_wall = cur_wall_time;
 
-		if (cur_idle_time < j_cdbs->prev_cpu_idle)
-			cur_idle_time = j_cdbs->prev_cpu_idle;
-
-		idle_time = (unsigned int)
-			(cur_idle_time - j_cdbs->prev_cpu_idle);
-		j_cdbs->prev_cpu_idle = cur_idle_time;
+		if (cur_idle_time <= j_cdbs->prev_cpu_idle) {
+			idle_time = 0;
+		} else {
+			idle_time = cur_idle_time - j_cdbs->prev_cpu_idle;
+			j_cdbs->prev_cpu_idle = cur_idle_time;
+		}
 
 		if (ignore_nice) {
 			u64 cur_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
-
 			idle_time += cputime_to_usecs(cur_nice - j_cdbs->prev_cpu_nice);
 			j_cdbs->prev_cpu_nice = cur_nice;
 		}
@@ -437,8 +435,7 @@ static int cpufreq_governor_start(struct cpufreq_policy *policy,
 	for_each_cpu(j, policy->cpus) {
 		struct cpu_dbs_info *j_cdbs = cdata->get_cpu_cdbs(j);
 
-		j_cdbs->prev_cpu_idle =
-			get_cpu_idle_time(j, &j_cdbs->prev_cpu_wall, io_busy);
+		j_cdbs->prev_cpu_idle = get_cpu_idle_time(j, &j_cdbs->prev_cpu_wall, io_busy);
 
 		/*
 		 * Make the first invocation of dbs_update() compute the load.
