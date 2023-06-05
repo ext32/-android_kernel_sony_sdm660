@@ -416,7 +416,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
 	 * sequentiality; this is because not all clear_pending_set_locked()
 	 * implementations imply full barriers.
 	 */
-	while ((val = smp_load_acquire(&lock->val.counter)) & _Q_LOCKED_MASK)
+	while ((val = smp_cond_load_acquire(&lock->val.counter)) & _Q_LOCKED_MASK)
 		cpu_relax();
 
 	/*
@@ -501,7 +501,7 @@ queue:
 	 *
 	 */
 	pv_wait_head(lock, node);
-	smp_cond_acquire(!((val = atomic_read(&lock->val)) & _Q_LOCKED_PENDING_MASK));
+	val = smp_cond_load_acquire(&lock->val.counter, !(VAL & _Q_LOCKED_PENDING_MASK));
 
 	/*
 	 * claim the lock:
