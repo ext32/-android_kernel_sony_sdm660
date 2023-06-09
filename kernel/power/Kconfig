@@ -323,10 +323,6 @@ config PM_GENERIC_DOMAINS_OF
 config CPU_PM
 	bool
 
-config DEDUCE_WAKEUP_REASONS
-       bool
-       default n
-
 config SUSPEND_TIME_TIMEKEEPING
 	bool "get suspend time from timekeeping"
 	default y if SUSPEND_TIME
@@ -359,3 +355,7 @@ config POWERSUSPEND_DEBUG
 	depends on POWERSUSPEND
 	help
 	  Output debugging info in dmesg
+
+config DEDUCE_WAKEUP_REASONS
+	bool
+	default n
