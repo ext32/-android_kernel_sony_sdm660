@@ -48,7 +48,7 @@ module_param_named(adreno_idler_idleworkload, idleworkload, ulong, 0664);
    down the frequency.
    This implementation is to prevent micro-lags on scrolling or playing games,
    meaning the lower it gets, the slower & low-power it would get. */
-static unsigned int idlewait = 20;
+static unsigned int idlewait = 15;
 module_param_named(adreno_idler_idlewait, idlewait, uint, 0664);
 
 /* Taken from ondemand */
