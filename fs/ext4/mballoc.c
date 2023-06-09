@@ -3254,7 +3254,7 @@ ext4_mb_normalize_request(struct ext4_allocation_context *ac,
 		/* merge to the left */
 		ext4_get_group_no_and_offset(ac->ac_sb, ar->pleft + 1,
 						&ac->ac_g_ex.fe_group,
-						&ac->ac_g_ex.fe_start)
+						&ac->ac_g_ex.fe_start);
 		ac->ac_flags |= EXT4_MB_HINT_TRY_GOAL;
 	}
 
