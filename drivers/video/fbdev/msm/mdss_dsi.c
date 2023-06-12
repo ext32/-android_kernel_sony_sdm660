@@ -38,6 +38,10 @@
 #include <linux/state_notifier.h>
 #endif
 
+#ifdef CONFIG_POWERSUSPEND
+#include <linux/powersuspend.h>
+#endif
+
 #define CMDLINE_DSI_CTL_NUM_STRING_LEN 2
 
 /* Master structure to hold all the information about the DSI/panel */
@@ -431,6 +435,9 @@ static int mdss_dsi_panel_power_ctrl(struct mdss_panel_data *pdata,
 #ifdef CONFIG_STATE_NOTIFIER
 		state_suspend();
 #endif
+#ifdef CONFIG_POWERSUSPEND
+ 		set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
+#endif
 		break;
 	case MDSS_PANEL_POWER_ON:
 		if (mdss_dsi_is_panel_on_lp(pdata))
@@ -439,6 +446,9 @@ static int mdss_dsi_panel_power_ctrl(struct mdss_panel_data *pdata,
 			ret = mdss_dsi_panel_power_on(pdata);
 #ifdef CONFIG_STATE_NOTIFIER
 		state_resume();
+#endif
+#ifdef CONFIG_POWERSUSPEND
+ 		set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
 #endif
 		break;
 	case MDSS_PANEL_POWER_LP1:
