@@ -29,6 +29,7 @@
 
 #ifdef CONFIG_POWERSUSPEND
 #include <linux/powersuspend.h>
+#endif
 
 #ifdef CONFIG_FB_MSM_MDSS_FLICKER_FREE
 #include "flicker_free.h"
