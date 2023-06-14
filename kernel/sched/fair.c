@@ -6767,6 +6767,15 @@ static unsigned long group_max_util(struct energy_env *eenv)
 
 	}
 
+
+		/*
+		 * Take into account any minimum frequency imposed
+		 * elsewhere which limits the energy states available
+		 * If the MIN_CAPACITY_CAPPING feature is not enabled
+		 * capacity_min_of will return 0 (not capped).
+		 */
+		max_util = max(max_util, capacity_min_of(cpu));
+
 	return max_util;
 }
 
