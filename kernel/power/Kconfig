@@ -41,6 +41,13 @@ config WAKELOCK
 config HIBERNATE_CALLBACKS
 	bool
 
+config POWERSUSPEND
+	bool "Power suspend"
+	default y
+	---help---
+	  Call early suspend handlers when the user requested sleep state
+	  changes.
+
 config HIBERNATION
 	bool "Hibernation (aka 'suspend to disk')"
 	depends on SWAP && ARCH_HIBERNATION_POSSIBLE
@@ -342,13 +349,6 @@ config QUICK_WAKEUP
 	---help---
 	  Allow kernel driver to do periodic jobs without resuming the full system
 	  This option can increase battery life on android powered smartphone.
-
-config POWERSUSPEND
-	bool "Power suspend"
-	default y
-	---help---
-	  Call early suspend handlers when the user requested sleep state
-	  changes.
 
 config POWERSUSPEND_DEBUG
 	bool "Powersuspend driver debugging code"
